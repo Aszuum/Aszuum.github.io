@@ -2,7 +2,6 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Кнопкопресер</title>
     <style>
         body {
@@ -10,61 +9,51 @@
             max-width: 600px;
             margin: 20px auto;
             padding: 20px;
-            background: #f5f6fa;
+            background: #f0f4f8;
         }
         .container {
             background: white;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
             text-align: center;
         }
         #last-click {
-            margin-top: 25px;
+            margin-top: 20px;
             padding: 15px;
             background: #2ecc71;
             color: white;
             border-radius: 8px;
-            font-size: 1.2em;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🥁 Барабанная кнопка 🥁</h1>
-        <p>Последний, кто её нажал:</p>
-        <div id="last-click">Загрузка...</div>
+        <h1>🔄 Последний клик</h1>
+        <div id="last-click">Загрузка данных...</div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    
     <script>
-        // Конфиг из Firebase (замени на свой!)
+        // Конфиг Firebase (ЗАМЕНИ НА СВОЙ!)
         const firebaseConfig = {
             apiKey: "AIzaSyBx...",
-            authDomain: "ваш-проект.firebaseapp.com",
-            databaseURL: "https://ваш-проект-default-rtdb.firebaseio.com/",
-            projectId: "ваш-проект",
-            storageBucket: "ваш-проект.appspot.com",
-            appId: "1:123456789:web:abcdef123456"
+            databaseURL: "https://ВАШ-ПРОЕКТ.firebaseio.com"
         };
 
-        // Инициализация Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Слушаем последнее нажатие
+        // Обновление данных в реальном времени
         db.ref('buttonPresses').limitToLast(1).on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 const lastPress = Object.values(data)[0];
-                const date = new Date(lastPress.timestamp);
-                const formattedDate = `${date.toLocaleDateString()} в ${date.toLocaleTimeString()}`;
                 document.getElementById('last-click').innerHTML = `
                     @${lastPress.username}<br>
-                    <small>${formattedDate}</small>
+                    ${new Date(lastPress.timestamp).toLocaleString()}
                 `;
             }
         });
