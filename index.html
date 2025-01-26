@@ -2,351 +2,72 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Полный анализ цен</title>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кнопкопресер</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
-        }
-
         body {
-            background: #fff;
-            padding: 1rem;
-            -webkit-tap-highlight-color: transparent;
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f6fa;
         }
-
-        .dashboard {
-            max-width: 100%;
-            margin: 0 auto;
-        }
-
-        h1 {
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
             text-align: center;
-            color: #1d1d1f;
-            margin: 1.5rem 0;
-            font-size: clamp(1.5rem, 6vw, 2rem);
-            font-weight: 600;
         }
-
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .product-card {
-            background: #fff;
-            border-radius: 1rem;
-            padding: 1.2rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: transform 0.2s;
-            border: 1px solid #e0e0e0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            margin-bottom: 1rem;
-        }
-
-        .card-icon {
-            width: 2.8rem;
-            height: 2.8rem;
-            border-radius: 0.7rem;
-            background: #f5f5f7;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            color: #1d1d1f;
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: #1d1d1f;
-        }
-
-        .price-tag {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #34C759;
-            margin-bottom: 0.3rem;
-        }
-
-        .purchase-info {
-            color: #86868b;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .price-diff {
-            font-size: 0.85rem;
-            padding: 0.25rem 0.7rem;
-            border-radius: 0.8rem;
-            background: #f5f5f7;
-            display: inline-block;
-        }
-
-        .price-up { color: #34C759; }
-        .price-down { color: #FF3B30; }
-
-        .chart-container {
-            background: #fff;
-            border-radius: 1rem;
-            padding: 1rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            border: 1px solid #e0e0e0;
-            overflow: hidden;
-        }
-
-        #priceChart {
-            height: 60vh;
-            min-height: 400px;
-            width: 100%;
-        }
-
-        .mobile-tooltip {
-            display: none;
-            color: #86868b;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-            line-height: 1.4;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 0.5rem;
-            }
-            
-            .card-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .product-card {
-                padding: 1rem;
-            }
-            
-            #priceChart {
-                min-height: 300px;
-                height: 50vh;
-            }
-            
-            .card-icon {
-                width: 2.4rem;
-                height: 2.4rem;
-                font-size: 1.2rem;
-            }
-            
-            .price-tag {
-                font-size: 1.4rem;
-            }
-            
-            .mobile-tooltip {
-                display: block;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.3rem;
-                margin: 1rem 0;
-            }
-            
-            #priceChart {
-                height: 55vh;
-            }
+        #last-click {
+            margin-top: 25px;
+            padding: 15px;
+            background: #2ecc71;
+            color: white;
+            border-radius: 8px;
+            font-size: 1.2em;
         }
     </style>
 </head>
 <body>
-    <div class="dashboard">
-        <h1>📊 Анализ цен для пользователя @spolike на пользователя Пиров Сайфулло Гайбуллович</h1>
-        
-        <div class="card-grid">
-            <div class="product-card">
-                <div class="card-header">
-                    <div class="card-icon">🕯️</div>
-                    <div>
-                        <h2 class="card-title">Эмоциональный шантаж</h2>
-                        <div class="price-diff price-up">330$</div>
-                    </div>
-                </div>
-                <div class="price-tag">32,999₽</div>
-                <div class="purchase-info">Эмоциональный шантаж — это манипуляции, которые нацелены на психологическое состояние жертвы через угрозы её близким, публикацию интимных материалов или компромата, распространение лживой информации, порочащей репутацию. Например: злоумышленники могут угрожать расправой над семьёй, сливать в сеть личные переписки или фейковые доказательства «преступлений», чтобы заставить жертву подчиниться их требованиям.</div>
-                <div class="mobile-tooltip">Ответ на запрос передан с rosudatabasegroup\sam\9F-Qb-7KpR8v3znLxWcN2d\serverheatline.db</div>
-            </div>
-
-            <div class="product-card">
-                <div class="card-header">
-                    <div class="card-icon">📼</div>
-                    <div>
-                        <h2 class="card-title">YTP Сватинг</h2>
-                        <div class="price-diff price-up">818$</div>
-                    </div>
-                </div>
-                <div class="price-tag">79,999₽</div>
-                <div class="purchase-info">Это гибридная схема, объединяющая классический сватинг (ложный вызов спецслужб) и прямое принуждение жертвы к выполнению требований заказчика.</div>
-                <div class="mobile-tooltip">Ответ на запрос передан с rosudatabasegroup\sam\r5-Tg-mYhS4q9jAe1XkPw\serverheatline.db</div>
-            </div>
-
-            <div class="product-card">
-                <div class="card-header">
-                    <div class="card-icon">📘</div>
-                    <div>
-                        <h2 class="card-title">YTP Доксинг</h2>
-                        <div class="price-diff price-up">225$</div>
-                    </div>
-                </div>
-                <div class="price-tag">21,999₽</div>
-                <div class="purchase-info">Поиск конкретного человека в государственных источниках, включая данные, которые не были опубликованы, а также информацию, которая была скрыта властями.</div>
-                <div class="mobile-tooltip">Ответ на запрос передан с rosudatabasegroup\sam\2s-L8-6fGtUd3BvCs7MnZ\serverheatline.db</div>
-            </div>
-
-            <div class="product-card">
-                <div class="card-header">
-                    <div class="card-icon">⁉️</div>
-                    <div>
-                        <h2 class="card-title">Репутационные атаки</h2>
-                        <div class="price-diff price-up">от 60$</div>
-                    </div>
-                </div>
-                <div class="price-tag">от 5,999₽</div>
-                <div class="purchase-info">Ложные действия в контексте сваттинга — это умышленные обвинения жертвы в мелких административных нарушениях (например, фиктивные жалобы на шум, подделка фактов о неуплате налогов, фальсификация ПДД-нарушений), которые используются для шантажа, давления или дискредитации человека в сочетании с ложным вызовом спецслужб (сватингом). Цель — создать угрозу крупных штрафов или репутационного ущерба, чтобы принудить жертву к выполнению требований злоумышленников.</div>
-                <div class="mobile-tooltip">Ответ на запрос передан с rosudatabasegroup\sam\Hj-4P-wQ5rTp9KaLo2yVb\serverheatline.db</div>
-            </div>
-
-            <div class="product-card">
-                <div class="card-header">
-                    <div class="card-icon">🏴</div>
-                    <div>
-                        <h2 class="card-title">Физическое преследование</h2>
-                        <div class="price-diff price-up">170$</div>
-                    </div>
-                </div>
-                <div class="price-tag">16,999₽</div>
-                <div class="purchase-info">Физическое преследование — это действия, направленные на прямое нарушение личного пространства и безопасности жертвы. Например: слежка за её перемещениями, провокации через подстроенные конфликты с незнакомцами, порча имущества (разбитые окна, поджоги), а также ложные вызовы спецслужб (полиции, МЧС) по надуманным причинам.</div>
-                <div class="mobile-tooltip">Ответ на запрос передан с rosudatabasegroup\sam\n3-Dx-8JsFzqR1eNk4mYh\serverheatline.db</div>
-            </div>
-        </div>
-
-        <div class="chart-container">
-            <div id="priceChart"></div>
-        </div>
+    <div class="container">
+        <h1>🥁 Барабанная кнопка 🥁</h1>
+        <p>Последний, кто её нажал:</p>
+        <div id="last-click">Загрузка...</div>
     </div>
 
-<script>
-const products = [
-    {
-        name: "Эмоциональный шантаж",
-        price: 32999,
-        purchasePrice: 25000,
-        comment: "Эмоциональный шантаж — это манипуляции, которые нацелены на психологическое состояние жертвы через угрозы её близким, публикацию интимных материалов или компромата, распространение лживой информации, порочащей репутацию. Например: злоумышленники могут угрожать расправой над семьёй, сливать в сеть личные переписки или фейковые доказательства «преступлений», чтобы заставить жертву подчиниться их требованиям.",
-        history: [24000,24500,25500,25000,26000,27500,28500,29500,30500,32999],
-        icon: "🕯️",
-        diff: "330$"
-    },
-    {
-        name: "YTP Сватинг",
-        price: 79999,
-        purchasePrice: 70000,
-        comment: "Это гибридная схема, объединяющая классический сватинг (ложный вызов спецслужб) и прямое принуждение жертвы к выполнению требований заказчика.",
-        history: [68000,69000,70000,71000,72000,73000,74000,75000,77000,79999],
-        icon: "📼",
-        diff: "818$"
-    },
-    {
-        name: "YTP Доксинг",
-        price: 21999,
-        purchasePrice: 18000,
-        comment: "Поиск конкретного человека в государственных источниках, включая данные, которые не были опубликованы, а также информацию, которая была скрыта властями.",
-        history: [17000,17500,18000,18500,19000,19500,20000,20500,21000,21999],
-        icon: "📘",
-        diff: "225$"
-    },
-    {
-        name: "Репутационные атаки",
-        price: 5999,
-        purchasePrice: 4000,
-        comment: "Ложные действия в контексте сваттинга — это умышленные обвинения жертвы в мелких административных нарушениях (например, фиктивные жалобы на шум, подделка фактов о неуплате налогов, фальсификация ПДД-нарушений), которые используются для шантажа, давления или дискредитации человека в сочетании с ложным вызовом спецслужб (сватингом). Цель — создать угрозу крупных штрафов или репутационного ущерба, чтобы принудить жертву к выполнению требований злоумышленников.",
-        history: [3800,3900,4000,4200,4400,4600,4800,5200,5500,5999],
-        icon: "⁉️",
-        diff: "от 60$"
-    },
-    {
-        name: "Физическое преследование",
-        price: 16999,
-        purchasePrice: 13000,
-        comment: "Физическое преследование — это действия, направленные на прямое нарушение личного пространства и безопасности жертвы. Например: слежка за её перемещениями, провокации через подстроенные конфликты с незнакомцами, порча имущества (разбитые окна, поджоги), а также ложные вызовы спецслужб (полиции, МЧС) по надуманным причинам.",
-        history: [12500,12800,13000,13500,14000,14500,15000,15500,16000,16999],
-        icon: "🏴",
-        diff: "170$"
-    }
-];
-
-google.charts.load('current', {packages: ['corechart']});
-google.charts.setOnLoadCallback(drawChart);
-
-function darkenColor(hex, percent) {
-    const num = parseInt(hex.replace("#", ""), 16),
-        amt = Math.round(2.55 * percent),
-        R = (num >> 16) - amt,
-        B = (num >> 8 & 0x00FF) - amt,
-        G = (num & 0x0000FF) - amt;
-    return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-            (B < 255 ? B < 1 ? 0 : B : 255) * 0x100 +
-            (G < 255 ? G < 1 ? 0 : G : 255)).toString(16).slice(1);
-}
-
-function drawChart() {
-    const data = new google.visualization.DataTable();
-    data.addColumn('string', 'Месяц');
-    products.forEach(p => data.addColumn('number', p.name));
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     
-    const months = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт'];
-    data.addRows(months.map((month, i) => [month, ...products.map(p => p.history[i])]));
+    <script>
+        // Конфиг из Firebase (замени на свой!)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBx...",
+            authDomain: "ваш-проект.firebaseapp.com",
+            databaseURL: "https://ваш-проект-default-rtdb.firebaseio.com/",
+            projectId: "ваш-проект",
+            storageBucket: "ваш-проект.appspot.com",
+            appId: "1:123456789:web:abcdef123456"
+        };
 
-    const baseColors = ['#007AFF','#34C759','#FF9500','#AF52DE','#FF3B30'];
-    const seriesOptions = baseColors.map((color, i) => ({
-        color: color,
-        lineWidth: 3,
-        pointSize: 8,
-        pointShape: 'circle',
-        strokeColor: darkenColor(color, 30),
-        strokeSize: 2,
-        visibleInLegend: true,
-        curveType: 'function',
-        targetAxisIndex: 0
-    }));
+        // Инициализация Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-    const options = {
-        title: '',
-        legend: {position: 'bottom', textStyle: {color: '#1d1d1f', fontSize: 12}},
-        colors: baseColors,
-        series: seriesOptions,
-        backgroundColor: 'transparent',
-        hAxis: {textStyle: {color: '#86868b'}, showTextEvery: 2},
-        vAxis: {format: 'currency', textStyle: {color: '#86868b'}, gridlines: {color: '#f0f0f0'}},
-        chartArea: {width: '90%', height: '75%'},
-        tooltip: {trigger: 'focus', textStyle: {color: '#1d1d1f'}, showColorCode: true},
-        focusTarget: 'category',
-        crosshair: {color: '#000', opacity: 0.1, trigger: 'both'},
-        pointsVisible: true
-    };
-
-    const chart = new google.visualization.LineChart(document.getElementById('priceChart'));
-    chart.draw(data, options);
-    
-    window.addEventListener('resize', () => chart.draw(data, options));
-}
-</script>
+        // Слушаем последнее нажатие
+        db.ref('buttonPresses').limitToLast(1).on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const lastPress = Object.values(data)[0];
+                const date = new Date(lastPress.timestamp);
+                const formattedDate = `${date.toLocaleDateString()} в ${date.toLocaleTimeString()}`;
+                document.getElementById('last-click').innerHTML = `
+                    @${lastPress.username}<br>
+                    <small>${formattedDate}</small>
+                `;
+            }
+        });
+    </script>
 </body>
 </html>
