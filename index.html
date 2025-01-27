@@ -3,250 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Официальная памятка: Профилактика бытовых отравлений</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html-docx-js/0.3.1/html-docx.js"></script>
+    <title>Недействительный чек</title>
     <style>
-        :root {
-            --purple-1: #6A1B9A; /* Темно-фиолетовый */
-            --purple-2: #8E24AA; /* Фиолетовый */
-            --purple-3: #AB47BC; /* Светло-фиолетовый */
-            --accent: #FF4081; /* Акцентный розовый */
-        }
-
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            background: linear-gradient(45deg, #f3e5f5, #ede7f6); /* Светлый фиолетовый градиент */
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             margin: 0;
-            color: #2d004d; /* Темно-фиолетовый текст */
+            padding: 0;
         }
-
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
         }
-
-        .header {
-            background: linear-gradient(45deg, var(--purple-1), var(--purple-2)); /* Фиолетовый градиент */
+        header {
+            background: #35424a;
+            color: #ffffff;
             padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            color: white;
-            margin: 0;
-            font-size: 2.2em;
-            padding-left: 20px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(106,27,154,0.1); /* Фиолетовая тень */
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        h2 {
-            color: var(--purple-1); /* Темно-фиолетовый */
-            border-bottom: 2px solid var(--purple-3); /* Светло-фиолетовый */
-            padding-bottom: 10px;
-            margin-top: 0;
-        }
-
-        h3 {
-            color: var(--purple-2); /* Фиолетовый */
-            margin: 20px 0 10px;
-            font-size: 1.3em;
-        }
-
-        ul {
-            padding-left: 25px;
-            margin: 15px 0;
-        }
-
-        li {
-            margin-bottom: 10px;
-        }
-
-        .news-source {
-            font-size: 0.9em;
-            color: #666;
-            margin: 15px 0;
-            padding-left: 15px;
-            border-left: 3px solid var(--accent); /* Акцентный розовый */
-        }
-
-        #exportBtn {
-            background: linear-gradient(135deg, var(--purple-1), var(--purple-2), var(--purple-3)); /* Фиолетовый градиент */
-            background-size: 300% 300%;
-            color: white;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: transform 0.2s;
-            display: block;
-            margin: 40px auto;
-            animation: gradientFlow 6s ease infinite;
-            box-shadow: 0 4px 15px rgba(106,27,154,0.3); /* Фиолетовая тень */
-        }
-
-        #exportBtn:hover {
-            transform: translateY(-2px);
-        }
-
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50% }
-            50% { background-position: 100% 50% }
-            100% { background-position: 0% 50% }
-        }
-
-        .footer {
             text-align: center;
-            padding: 30px;
-            color: #666;
-            font-size: 0.9em;
-            background: white;
         }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-            
-            .card {
-                padding: 20px;
-            }
+        .notification {
+            background: #ffdddd;
+            color: #d8000c;
+            padding: 15px;
+            margin: 20px 0;
+            border: 1px solid #d8000c;
+            border-radius: 5px;
+        }
+        .menu {
+            position: relative;
+            display: inline-block;
+        }
+        .menu-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            min-width: 160px;
+        }
+        .menu-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .menu-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .menu:hover .menu-content {
+            display: block;
+        }
+        .request-info {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .request-info:hover {
+            background: #45a049;
+        }
+        .loading {
+            display: none;
+            margin-top: 20px;
+            color: #333;
         }
     </style>
+    <script>
+        function requestInfo() {
+            const loadingMessage = document.getElementById('loading');
+            loadingMessage.style.display = 'block';
+            loadingMessage.innerHTML = 'Запрос информации у Каменского Тимура Владимировича с паспортом 651065...';
+
+            setTimeout(() => {
+                loadingMessage.innerHTML = 'Информация успешно запрошена!';
+            }, 3000); // Задержка 3 секунды для симуляции запроса
+        }
+    </script>
 </head>
 <body>
-    <div class="header">
-        <div class="container">
-            <h1>Профилактика бытовых отравлений</h1>
-        </div>
-    </div>
-
+    <header>
+        <h1>Уведомление о чеке</h1>
+    </header>
     <div class="container">
-        <div class="grid">
-            <!-- Левая колонка - Памятка -->
-            <div class="card">
-                <h2>Профилактика бытовых отравлений</h2>
-
-                <h3>1. Пищевые отравления</h3>
-                <ul>
-                    <li><strong>Хранение продуктов:</strong> Соблюдайте сроки годности, храните сырое мясо и рыбу отдельно от готовых блюд. Избегайте повторного замораживания продуктов.</li>
-                    <li><strong>Гигиена:</strong> Мойте руки перед готовкой и едой. Используйте отдельные разделочные доски для сырых и готовых продуктов.</li>
-                    <li><strong>Приготовление пищи:</strong> Тщательно проваривайте/прожаривайте мясо, яйца, рыбу. Не употребляйте консервы со вздутыми крышками.</li>
-                    <li><strong>Особо опасные продукты:</strong> Молочные изделия, грибы, домашние консервы требуют повышенного внимания. Избегайте уличной еды сомнительного качества.</li>
-                </ul>
-
-                <h3>2. Бытовая химия и ядохимикаты</h3>
-                <ul>
-                    <li><strong>Хранение:</strong> Держите средства в оригинальной упаковке, в недоступном для детей месте. Не переливайте в бутылки для напитков.</li>
-                    <li><strong>Использование:</strong> Надевайте перчатки и маску при работе с агрессивными веществами. Проветривайте помещение.</li>
-                    <li><strong>Утилизация:</strong> Не выбрасывайте батарейки, ртутные лампы и химикаты с обычным мусором — используйте специальные пункты приёма.</li>
-                </ul>
-
-                <h3>3. Лекарственные препараты</h3>
-                <ul>
-                    <li><strong>Дозировка:</strong> Строго следуйте инструкциям. Храните лекарства в заводской упаковке с инструкцией.</li>
-                    <li><strong>Детский доступ:</strong> Используйте аптечки с замком. Не называйте лекарства «конфетками».</li>
-                    <li><strong>Совместимость:</strong> Консультируйтесь с врачом перед смешиванием препаратов.</li>
-                </ul>
-
-                <h3>4. Угарный газ и токсичные испарения</h3>
-                <ul>
-                    <li><strong>Проветривание:</strong> Не оставляйте работающие газовые плиты или печи без присмотра. Устанавливайте датчики угарного газа.</li>
-                    <li><strong>Ремонт:</strong> Регулярно проверяйте вентиляцию и дымоходы.</li>
-                </ul>
-
-                <h3>5. Алкоголь и суррогаты</h3>
-                <ul>
-                    <li><strong>Качество:</strong> Покупайте алкоголь только в лицензированных магазинах. Избегайте самодельных напитков.</li>
-                    <li><strong>Мера:</strong> Не превышайте безопасные дозы. При симптомах отравления (рвота, спутанность сознания) немедленно вызывайте скорую.</li>
-                </ul>
-            </div>
-
-            <!-- Правая колонка - СМИ и выводы -->
-            <div class="card">
-                <h2>Сообщения из СМИ</h2>
-
-                <h3>Массовые отравления в России (2024–2025 гг.)</h3>
-                <ul>
-                    <li><strong>Санаторий "Сосновый бор" (Красноярский край):</strong> 33 пожилых человека пострадали от острой кишечной инфекции.</li>
-                    <li><strong>Пекарни "Хлебница" (Пермь):</strong> Более 80 человек заразились сальмонеллёзом.</li>
-                    <li><strong>Детский лагерь "Уральские зори" (Башкирия):</strong> 40 детей отравились норовирусом.</li>
-                </ul>
-                <div class="news-source">
-                    Источники: 
-                    <a href="#">РИА Новости</a>, 
-                    <a href="#">ТАСС</a>, 
-                    <a href="#">Интерфакс</a>
-                </div>
-
-                <h3>Статистика по Марий Эл (2024 г.)</h3>
-                <ul>
-                    <li>217 смертей от бытовых отравлений</li>
-                    <li>30% - отравления спиртосодержащими жидкостями</li>
-                    <li>21% - передозировка лекарствами</li>
-                </ul>
-                <div class="news-source">
-                    Данные: Минздрав РФ, официальный отчет
-                </div>
-
-                <h3>Детские лагеря и школы</h3>
-                <ul>
-                    <li><strong>Красноярская школа №76:</strong> 43 ученика с ротавирусом</li>
-                    <li><strong>Лагерь "Чагытай" (Тыва):</strong> 96 детей отравились</li>
-                </ul>
-                <div class="news-source">
-                    По материалам расследований Роспотребнадзора
-                </div>
-
-                <h2>Выводы</h2>
-                <ul>
-                    <li>Основные причины - нарушения санитарных норм</li>
-                    <li>Критически важно соблюдать гигиену и технику безопасности</li>
-                    <li>При первых симптомах отравления обращаться к врачу</li>
-                </ul>
+        <div class="notification">
+            Чек недействителен. Пожалуйста, обратитесь к создателю чека для получения дополнительной информации.
+        </div>
+        <div class="menu">
+            <button>Запросить информацию</button>
+            <div class="menu-content">
+                <button class="request-info" onclick="requestInfo()">Запросить информацию</button>
             </div>
         </div>
-
-        <button id="exportBtn">Скачать памятку в Word</button>
+        <div id="loading" class="loading"></div>
     </div>
-
-    <div class="footer">
-        <p>Официальный документ Минздрава РФ • Актуально на 2024 год</p>
-        <p>Все источники проверены и подтверждены</p>
-    </div>
-
-    <script>
-        document.getElementById('exportBtn').addEventListener('click', function() {
-            const content = document.querySelector('.container').innerHTML;
-            
-            const converted = htmlDocx.asBlob(content, {
-                orientation: 'portrait',
-                margins: {top: 1000, right: 1000, bottom: 1000, left: 1000}
-            });
-            
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(converted);
-            link.download = 'Профилактика_отравлений_Минздрав.docx';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        });
-    </script>
 </body>
 </html>
