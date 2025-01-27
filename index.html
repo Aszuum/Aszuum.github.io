@@ -3,147 +3,331 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Квитанция об автосписании налога</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <title>Статус транзакции №7X9P-44T3-LKJ8</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary: #1A73E8;
+            --success: #34A853;
+            --error: #EA4335;
+            --warning: #FBBC05;
         }
 
         body {
-            background: #f5f5f5;
-            color: #333333;
             font-family: 'Roboto', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0;
             padding: 20px;
-        }
-
-        .receipt {
-            background: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 100%;
-            border: 1px solid #e0e0e0;
-        }
-
-        .header {
-            border-bottom: 2px solid #eeeeee;
-            padding-bottom: 25px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .bank-logo {
-            width: 180px;
-            margin-bottom: 20px;
-        }
-
-        .document-title {
-            font-size: 22px;
-            color: #2d2d2d;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        .details-grid {
-            display: grid;
-            grid-template-columns: 1.5fr 2fr;
-            gap: 15px;
-            margin: 30px 0;
-            font-size: 15px;
-        }
-
-        .label {
-            color: #666666;
-            font-weight: 400;
-        }
-
-        .value {
-            color: #2d2d2d;
-            font-weight: 500;
-        }
-
-        .highlight {
-            color: #0088cc;
-            font-weight: 600;
-        }
-
-        .total-box {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 25px 0;
-            border: 1px solid #e0e0e0;
-        }
-
-        .legal-info {
-            font-size: 13px;
-            color: #666666;
+            background: #f8faff;
+            color: #2d3748;
             line-height: 1.6;
-            margin-top: 30px;
-            border-top: 1px solid #eeeeee;
-            padding-top: 20px;
         }
 
-        .watermark {
-            opacity: 0.1;
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 25px 0;
+        }
+
+        .timeline::before {
+            content: '';
             position: absolute;
-            font-size: 80px;
-            transform: rotate(-30deg);
-            pointer-events: none;
+            left: 5px;
+            top: 15px;
+            width: 2px;
+            height: calc(100% - 30px);
+            background: #e2e8f0;
+        }
+
+        .step {
+            position: relative;
+            margin-bottom: 25px;
+            padding: 18px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            transition: transform 0.2s;
+        }
+
+        .step:hover {
+            transform: translateX(5px);
+        }
+
+        .step-icon {
+            position: absolute;
+            left: -35px;
+            top: 15px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border: 2px solid;
+            box-sizing: border-box;
+        }
+
+        .success { 
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .error { 
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .warning { 
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .personal-data {
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .icon {
+            width: 16px;
+            height: 16px;
+            background-size: contain;
+            background-position: center;
+        }
+
+        .success-icon { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2334A853"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'); }
+        .error-icon { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23EA4335"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>'); }
+        .warning-icon { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FBBC05"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>'); }
+
+        .card-details {
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .expandable-block {
+            background: #fff;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        details summary {
+            padding: 15px;
+            cursor: pointer;
+            font-weight: 500;
+            list-style: none;
+        }
+
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details[open] summary {
+            border-bottom: 1px solid #eee;
+        }
+
+        .map-container {
+            height: 300px;
+            width: 100%;
+            border: none;
+        }
+
+        .transaction-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .info-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .info-item small {
+            display: block;
+            color: #718096;
+            margin-bottom: 4px;
         }
     </style>
 </head>
 <body>
-    <div class="receipt">
-        <div class="header">
-            <div class="document-title">Автоматическое списание налога</div>
-            <div style="color: #666; margin-bottom: 15px;">ТБанк (АО "Тинькофф Банк")</div>
-        </div>
+    <div class="container">
+        <a href="https://www.gosuslugi.ru/" target="_blank" style="text-decoration: none;">
+            <div class="status-header">
+                <img src="https://static.rustore.ru/imgproxy/KGIXzUh0OVgxlnbXVLvfHB9tlpBLHuT2z3PjJ9wMnT0/preset:app_card_icon/aHR0cHM6Ly9zdGF0aWMucnVzdG9yZS5ydS9hcGsvNTM3NzkxL2NvbnRlbnQvSUNPTi8wOGFhMjRmZi02NmQ3LTQyYmEtYmRjNi00Nzg5NmQwZWQ4NTYucG5n.webp" 
+                     style="width: 45px; height: 45px; border-radius: 8px;">
+                <div>
+                    <h1 style="margin: 0">Транзакция №7X9P-44T3-LKJ8</h1>
+                    <small>Статус: <span style="color: var(--error)">Отменена</span></small>
+                </div>
+            </div>
+        </a>
 
-        <div class="details-grid">
-            <span class="label">Номер документа:</span>
-            <span class="value highlight">НФЛ-4521789-2025</span>
-            
-            <span class="label">Дата списания:</span>
-            <span class="value">27.01.2025 11:30:47</span>
-            
-            <span class="label">Владелец карты:</span>
-            <span class="value">Каменский Тимур Владимирович<br>Карта •••• 2528</span>
-            
-            <span class="label">Налогоплательщик:</span>
-            <span class="value">Авдеев Кирилл Николаевич<br>ИНН 132351136140</span>
-            
-            <span class="label">Назначение платежа:</span>
-            <span class="value">Налог на доходы ФЛ (Статья 228 НК 89932446906)<br>Период: 4 квартал 2024</span>
-            
-            <span class="label">Сумма списания:</span>
-            <span class="value">415,78 ₽</span>
-            
-            <span class="label">Основание:</span>
-            <span class="value">Платёжное поручение №45-Н от 25.01.2025</span>
-        </div>
-
-        <div class="total-box">
-            <div style="display: flex; justify-content: space-between; font-size: 17px;">
-                <span>Итого списано:</span>
-                <span class="highlight">415,78 ₽</span>
+        <!-- Персональные данные -->
+        <div class="personal-data">
+            <h3>Авдеев Кирилл Николаевич</h3>
+            <div class="data-item">
+                <span>Паспорт:</span>
+                <span>89 24 673165</span>
+            </div>
+            <div class="data-item">
+                <span>Телефон:</span>
+                <span>+7 966 053-30-53</span>
+            </div>
+            <div class="data-item">
+                <span>СНИЛС:</span>
+                <span>182-727-273 89</span>
             </div>
         </div>
 
-        <div class="legal-info">
-            <strong>Важная информация:</strong><br>
-            Списание произведено в соответствии с Федеральным законом №212-ФЗ.<br>
-            Остаток на карте: 12 458,22 ₽ (на момент операции)<br>
-            Комиссия за операцию: 0 ₽<br>
-            Техподдержка: 8 800 555-77-78 (круглосуточно)
+        <!-- Информация о транзакции -->
+        <div class="transaction-info">
+            <div class="info-item">
+                <small>Сумма</small>
+                <p>415,78 ₽</p>
+            </div>
+            <div class="info-item">
+                <small>Дата</small>
+                <p>15.07.2024</p>
+            </div>
+            <div class="info-item">
+                <small>Время</small>
+                <p>11:30:47</p>
+            </div>
+            <div class="info-item">
+                <small>Тип операции</small>
+                <p>Оплата услуг</p>
+            </div>
+        </div>
+
+        <!-- Данные карты -->
+        <div class="card-details">
+            <h3>Данные карты</h3>
+            <div class="data-item">
+                <span>Номер:</span>
+                <span>**** **** **** 2528</span>
+            </div>
+            <div class="data-item">
+                <span>Срок действия:</span>
+                <span>07/34</span>
+            </div>
+            <div class="data-item">
+                <span>Тип карты:</span>
+                <span>Дебетовая</span>
+            </div>
+            <div class="data-item">
+                <span>CVV:</span>
+                <span>***</span>
+            </div>
+        </div>
+
+        <!-- Блок с картой -->
+        <div class="expandable-block">
+            <details>
+                <summary>Адрес регистрации</summary>
+                <div class="map-container">
+                    <iframe 
+                        width="100%" 
+                        height="300" 
+                        frameborder="0" 
+                        scrolling="no" 
+                        marginheight="0" 
+                        marginwidth="0" 
+                        src="https://maps.google.com/maps?q=55.679590,38.173674&z=15&output=embed">
+                    </iframe>
+                </div>
+                <div style="padding:15px">
+                    ул. Стрыкино, Раменский муниципальный округ,<br>
+                    Московская область, 140163
+                </div>
+            </details>
+        </div>
+
+        <!-- История операций -->
+        <div class="timeline">
+            <div class="step">
+                <div class="step-icon success"><div class="icon success-icon"></div></div>
+                <h3>Идентификация пользователя</h3>
+                <p>Биометрическая верификация пройдена</p>
+                <small>11:28:15</small>
+            </div>
+
+            <div class="step">
+                <div class="step-icon warning"><div class="icon warning-icon"></div></div>
+                <h3>Привязка карты</h3>
+                <p>T Bank ****2528 (Каменский Т.В.)</p>
+                <small>Несоответствие владельца</small>
+            </div>
+
+            <div class="step">
+                <div class="step-icon error"><div class="icon error-icon"></div></div>
+                <h3>Попытка списания</h3>
+                <p>415,78 ₽ • 11:30:47</p>
+                <p style="color: var(--error); margin-top: 8px;">
+                    Ошибка авторизации
+                </p>
+            </div>
+
+            <div class="step">
+                <div class="step-icon success"><div class="icon success-icon"></div></div>
+                <h3>Отзыв привязки</h3>
+                <p>Карта ****2528 успешно отвязана</p>
+                <small>11:33:02</small>
+            </div>
+        </div>
+
+        <!-- Контактная информация -->
+        <div class="personal-data">
+            <h3>Контактная информация</h3>
+            <div class="data-item">
+                <span>Отделение банка:</span>
+                <span>Т Банк, филиал №45</span>
+            </div>
+            <div class="data-item">
+                <span>Телефон поддержки:</span>
+                <span>8 800 555-35-35</span>
+            </div>
+        </div>
+
+        <!-- Комментарий системы -->
+        <div class="personal-data">
+            <h3>Комментарий системы</h3>
+            <p style="color: var(--error); margin: 0;">
+                Ошибка: Несоответствие данных владельца карты
+            </p>
         </div>
     </div>
 </body>
