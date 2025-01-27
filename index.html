@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Galaxy iOS</title>
+    <title>Galaxy Network</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* iOS Reset */
         * {
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
         }
 
         body {
@@ -21,48 +19,14 @@
             overflow: hidden;
             touch-action: none;
             height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
         }
 
-        /* iOS Navigation Bar */
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(28, 28, 30, 0.8);
-            backdrop-filter: blur(20px);
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-title {
-            color: #fff;
-            font-weight: 600;
-            font-size: 17px;
-        }
-
-        .nav-button {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: #0A84FF;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 15px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        /* Canvas with Zoom/Pan */
         #galaxy {
             position: absolute;
             touch-action: none;
-            cursor: grab;
         }
 
-        /* iOS Modal */
         .modal {
             position: fixed;
             top: 50%;
@@ -77,12 +41,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: #fff;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-        }
-
-        .modal-header {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 12px;
+            display: none;
         }
 
         .level-badge {
@@ -92,102 +51,79 @@
             color: #1C1C1E;
             font-weight: 500;
             font-size: 14px;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <div class="nav-title">Galaxy Network</div>
-        <button class="nav-button" id="authButton">Войти</button>
-    </div>
-    
     <canvas id="galaxy"></canvas>
     
-    <div id="starModal" class="modal" style="display: none;">
-        <div class="modal-header" id="starUsername"></div>
+    <div class="modal" id="starModal">
+        <div id="starUsername"></div>
         <div class="level-badge" id="starLevel">Level 1</div>
-        <div style="margin-top: 16px;">
-            <div style="font-size: 13px; opacity: 0.8;">Опыт:</div>
-            <div class="progress-bar">
-                <div class="progress" id="starProgress"></div>
-            </div>
+        <div style="margin-top: 16px; font-size: 13px; opacity: 0.8;">
+            Опыт: <span id="starXP">0/100</span>
         </div>
     </div>
 
     <script>
+        const tg = window.Telegram.WebApp;
         let scale = 1;
+        let offsetX = 0, offsetY = 0;
         let panning = false;
-        let startX, startY, offsetX = 0, offsetY = 0;
+        let startX, startY;
         let stars = [];
-        let currentUser = null;
         const canvas = document.getElementById('galaxy');
         const ctx = canvas.getContext('2d');
 
-        // Telegram WebApp Init
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        // Level Colors (пастельные через каждые 5 уровней)
+        // Цвета для уровней (пастельные)
         const levelColors = [
             '#FFFFFF', '#FFE6FF', '#E6E6FF', '#E6FFFF', '#FFE6E6',
             '#F0E6FF', '#E6F0FF', '#FFFAE6', '#E6FFE6', '#FFEDE6'
         ];
 
-        // Zoom/Pan Handlers
-        function handleWheel(e) {
-            e.preventDefault();
-            const zoomIntensity = 0.1;
-            const oldScale = scale;
-            scale *= e.deltaY > 0 ? 0.9 : 1.1;
-            scale = Math.min(Math.max(1, scale), 5);
-            
-            const mouseX = e.clientX - canvas.getBoundingClientRect().left;
-            const mouseY = e.clientY - canvas.getBoundingClientRect().top;
-            
-            offsetX -= (mouseX - offsetX) * (scale/oldScale - 1);
-            offsetY -= (mouseY - offsetY) * (scale/oldScale - 1);
-            
-            draw();
+        // Инициализация Telegram
+        tg.expand();
+        tg.BackButton.hide();
+
+        // Авторизация
+        let user = null;
+        if (tg.initDataUnsafe.user) {
+            user = {
+                id: tg.initDataUnsafe.user.id,
+                username: tg.initDataUnsafe.user.username || `user_${tg.initDataUnsafe.user.id}`,
+                level: 1,
+                xp: 0
+            };
+            generateStar(user);
         }
 
-        function startPan(e) {
-            panning = true;
-            startX = (e.clientX || e.touches[0].clientX) - offsetX;
-            startY = (e.clientY || e.touches[0].clientY) - offsetY;
-            canvas.style.cursor = 'grabbing';
-        }
-
-        function doPan(e) {
-            if (!panning) return;
-            offsetX = (e.clientX || e.touches[0].clientX) - startX;
-            offsetY = (e.clientY || e.touches[0].clientY) - startY;
-            draw();
-        }
-
-        function endPan() {
-            panning = false;
-            canvas.style.cursor = 'grab';
-        }
-
-        // Star Generation
+        // Генерация звезды пользователя
         function generateStar(user) {
-            const star = {
+            const newStar = {
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
                 radius: 6,
-                level: 1,
-                user: user
+                level: user.level,
+                username: user.username,
+                xp: user.xp,
+                userId: user.id
             };
 
-            // Collision check
-            if (!stars.some(s => distance(s, star) < 100)) {
-                stars.push(star);
+            // Проверка коллизий
+            const hasCollision = stars.some(star => 
+                Math.hypot(newStar.x - star.x, newStar.y - star.y) < 100
+            );
+
+            if (!hasCollision) {
+                stars.push(newStar);
+                draw();
                 return true;
             }
             return false;
         }
 
-        // Drawing
+        // Отрисовка
         function draw() {
             ctx.save();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -197,8 +133,8 @@
             stars.forEach(star => {
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                ctx.fillStyle = getStarColor(star.level);
-                ctx.shadowColor = getStarColor(star.level);
+                ctx.fillStyle = getLevelColor(star.level);
+                ctx.shadowColor = getLevelColor(star.level);
                 ctx.shadowBlur = 15;
                 ctx.fill();
             });
@@ -206,45 +142,71 @@
             ctx.restore();
         }
 
-        // Level Color Logic
-        function getStarColor(level) {
-            const colorIndex = Math.floor(level / 5) % levelColors.length;
-            return levelColors[colorIndex];
+        // Цвет по уровню
+        function getLevelColor(level) {
+            return levelColors[Math.floor(level / 5) % levelColors.length];
         }
 
-        // Telegram Auth
-        document.getElementById('authButton').addEventListener('click', () => {
-            tg.showAlert('Авторизация через Telegram...', () => {
-                currentUser = {
-                    id: tg.initDataUnsafe.user.id,
-                    username: tg.initDataUnsafe.user.username,
-                    level: 1
-                };
-                generateStar(currentUser);
+        // Обработка событий
+        canvas.addEventListener('wheel', e => {
+            e.preventDefault();
+            const zoom = e.deltaY > 0 ? 0.9 : 1.1;
+            scale = Math.min(Math.max(1, scale * zoom), 5);
+            draw();
+        });
+
+        canvas.addEventListener('mousedown', e => {
+            panning = true;
+            startX = e.clientX - offsetX;
+            startY = e.clientY - offsetY;
+        });
+
+        canvas.addEventListener('mousemove', e => {
+            if (panning) {
+                offsetX = e.clientX - startX;
+                offsetY = e.clientY - startY;
                 draw();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => panning = false);
+
+        // Клик по звезде
+        canvas.addEventListener('click', e => {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left - offsetX) / scale;
+            const y = (e.clientY - rect.top - offsetY) / scale;
+
+            stars.forEach(star => {
+                if (Math.hypot(x - star.x, y - star.y) < 20) {
+                    showStarInfo(star);
+                }
             });
         });
 
-        // Init
+        // Показать информацию о звезде
+        function showStarInfo(star) {
+            const modal = document.getElementById('starModal');
+            document.getElementById('starUsername').textContent = `@${star.username}`;
+            document.getElementById('starLevel').textContent = `Level ${star.level}`;
+            document.getElementById('starXP').textContent = `${star.xp}/100`;
+            modal.style.display = 'block';
+        }
+
+        // Закрытие модалки
+        document.querySelector('.modal').addEventListener('click', () => {
+            document.getElementById('starModal').style.display = 'none';
+        });
+
+        // Инициализация холста
         function init() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            
-            // Event Listeners
-            canvas.addEventListener('wheel', handleWheel);
-            canvas.addEventListener('mousedown', startPan);
-            canvas.addEventListener('mousemove', doPan);
-            canvas.addEventListener('mouseup', endPan);
-            canvas.addEventListener('touchstart', startPan);
-            canvas.addEventListener('touchmove', doPan);
-            canvas.addEventListener('touchend', endPan);
-
-            // First Star
-            generateStar({ id: 'default', username: 'Гость', level: 1 });
             draw();
         }
 
-        init();
+        window.addEventListener('load', init);
+        window.addEventListener('resize', init);
     </script>
 </body>
 </html>
