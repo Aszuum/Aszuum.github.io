@@ -3,207 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Galaxy Network</title>
+    <title>Galaxy iOS</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Reset стилей */
+        /* iOS Reset */
         * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
         }
 
-        /* Основные стили */
         body {
             background: #000;
             overflow: hidden;
             touch-action: none;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui;
             height: 100vh;
         }
 
-        /* Холст для звёзд */
-        #galaxy {
+        /* iOS Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
             width: 100%;
-            height: 100%;
+            background: rgba(28, 28, 30, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Модальное окно (iOS-стиль) */
+        .nav-title {
+            color: #fff;
+            font-weight: 600;
+            font-size: 17px;
+        }
+
+        .nav-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #0A84FF;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        /* Canvas with Zoom/Pan */
+        #galaxy {
+            position: absolute;
+            touch-action: none;
+            cursor: grab;
+        }
+
+        /* iOS Modal */
         .modal {
-            display: none;
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(28, 28, 30, 0.9);
             backdrop-filter: blur(40px);
-            border-radius: 18px;
+            border-radius: 14px;
             padding: 20px;
-            color: #fff;
-            width: 85%;
+            width: 80%;
             max-width: 300px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
-        /* Прогресс-бар */
-        .progress-bar {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            margin: 15px 0;
-            overflow: hidden;
+        .modal-header {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
         }
 
-        .progress {
-            height: 100%;
-            background: linear-gradient(90deg, #f0f0ff 0%, #fff0ff 100%);
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Кнопка закрытия */
-        .close {
-            position: absolute;
-            right: 16px;
-            top: 16px;
-            font-size: 24px;
-            cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-
-        .close:hover {
-            opacity: 1;
+        .level-badge {
+            background: linear-gradient(45deg, #e6e6ff, #ffe6ff);
+            padding: 4px 10px;
+            border-radius: 20px;
+            color: #1C1C1E;
+            font-weight: 500;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <div class="nav-title">Galaxy Network</div>
+        <button class="nav-button" id="authButton">Войти</button>
+    </div>
+    
     <canvas id="galaxy"></canvas>
     
-    <div id="starModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2 id="starUsername" style="font-size: 1.2em; margin-bottom: 8px;">@username</h2>
-            <p style="opacity: 0.8;">Уровень: <span id="starLevel">1</span></p>
+    <div id="starModal" class="modal" style="display: none;">
+        <div class="modal-header" id="starUsername"></div>
+        <div class="level-badge" id="starLevel">Level 1</div>
+        <div style="margin-top: 16px;">
+            <div style="font-size: 13px; opacity: 0.8;">Опыт:</div>
             <div class="progress-bar">
-                <div class="progress" id="starProgress" style="width: 30%;"></div>
+                <div class="progress" id="starProgress"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // Инициализация
-        const canvas = document.getElementById('galaxy');
-        const ctx = canvas.getContext('2d');
+        let scale = 1;
+        let panning = false;
+        let startX, startY, offsetX = 0, offsetY = 0;
         let stars = [];
         let currentUser = null;
+        const canvas = document.getElementById('galaxy');
+        const ctx = canvas.getContext('2d');
 
-        // Размеры холста
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        // Telegram WebApp Init
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Level Colors (пастельные через каждые 5 уровней)
+        const levelColors = [
+            '#FFFFFF', '#FFE6FF', '#E6E6FF', '#E6FFFF', '#FFE6E6',
+            '#F0E6FF', '#E6F0FF', '#FFFAE6', '#E6FFE6', '#FFEDE6'
+        ];
+
+        // Zoom/Pan Handlers
+        function handleWheel(e) {
+            e.preventDefault();
+            const zoomIntensity = 0.1;
+            const oldScale = scale;
+            scale *= e.deltaY > 0 ? 0.9 : 1.1;
+            scale = Math.min(Math.max(1, scale), 5);
+            
+            const mouseX = e.clientX - canvas.getBoundingClientRect().left;
+            const mouseY = e.clientY - canvas.getBoundingClientRect().top;
+            
+            offsetX -= (mouseX - offsetX) * (scale/oldScale - 1);
+            offsetY -= (mouseY - offsetY) * (scale/oldScale - 1);
+            
+            draw();
         }
 
-        // Генерация звезды
-        function generateStar(userId) {
-            const newStar = {
+        function startPan(e) {
+            panning = true;
+            startX = (e.clientX || e.touches[0].clientX) - offsetX;
+            startY = (e.clientY || e.touches[0].clientY) - offsetY;
+            canvas.style.cursor = 'grabbing';
+        }
+
+        function doPan(e) {
+            if (!panning) return;
+            offsetX = (e.clientX || e.touches[0].clientX) - startX;
+            offsetY = (e.clientY || e.touches[0].clientY) - startY;
+            draw();
+        }
+
+        function endPan() {
+            panning = false;
+            canvas.style.cursor = 'grab';
+        }
+
+        // Star Generation
+        function generateStar(user) {
+            const star = {
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
                 radius: 6,
-                color: '#ffffff',
-                userId: userId,
-                level: 1
+                level: 1,
+                user: user
             };
 
-            // Проверка коллизий
-            const minDistance = 70;
-            const hasCollision = stars.some(star => {
-                const dx = star.x - newStar.x;
-                const dy = star.y - newStar.y;
-                return Math.sqrt(dx*dx + dy*dy) < minDistance;
-            });
-
-            if (!hasCollision) {
-                stars.push(newStar);
-                saveStars();
+            // Collision check
+            if (!stars.some(s => distance(s, star) < 100)) {
+                stars.push(star);
                 return true;
             }
             return false;
         }
 
-        // Анимация
-        function animate() {
+        // Drawing
+        function draw() {
+            ctx.save();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+            ctx.translate(offsetX, offsetY);
+            ctx.scale(scale, scale);
+
             stars.forEach(star => {
-                // Мерцание
-                const glow = Math.random() * 0.4 + 0.6;
-                
                 ctx.beginPath();
                 ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${glow})`;
-                ctx.shadowColor = star.color;
+                ctx.fillStyle = getStarColor(star.level);
+                ctx.shadowColor = getStarColor(star.level);
                 ctx.shadowBlur = 15;
                 ctx.fill();
             });
-            
-            requestAnimationFrame(animate);
+
+            ctx.restore();
         }
 
-        // Обработка кликов
-        function handleClick(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX || e.touches[0].clientX) - rect.left;
-            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+        // Level Color Logic
+        function getStarColor(level) {
+            const colorIndex = Math.floor(level / 5) % levelColors.length;
+            return levelColors[colorIndex];
+        }
 
-            stars.forEach(star => {
-                const dx = x - star.x;
-                const dy = y - star.y;
-                if (Math.sqrt(dx*dx + dy*dy) < 20) {
-                    showStarModal(star);
-                }
+        // Telegram Auth
+        document.getElementById('authButton').addEventListener('click', () => {
+            tg.showAlert('Авторизация через Telegram...', () => {
+                currentUser = {
+                    id: tg.initDataUnsafe.user.id,
+                    username: tg.initDataUnsafe.user.username,
+                    level: 1
+                };
+                generateStar(currentUser);
+                draw();
             });
-        }
-
-        // Модальное окно
-        function showStarModal(star) {
-            const modal = document.getElementById('starModal');
-            document.getElementById('starUsername').textContent = `@user_${star.userId}`;
-            document.getElementById('starLevel').textContent = star.level;
-            document.getElementById('starProgress').style.width = `${(star.level % 100)}%`;
-            modal.style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('starModal').style.display = 'none';
-        }
-
-        // LocalStorage
-        function saveStars() {
-            localStorage.setItem('galaxyStars', JSON.stringify(stars));
-        }
-
-        function loadStars() {
-            const saved = localStorage.getItem('galaxyStars');
-            stars = saved ? JSON.parse(saved) : [];
-        }
-
-        // Инициализация
-        window.addEventListener('load', () => {
-            resizeCanvas();
-            loadStars();
-            
-            // Создаём первую звезду для нового пользователя
-            if (stars.length === 0) {
-                generateStar(Date.now().toString(36));
-            }
-            
-            animate();
         });
 
-        // События
-        window.addEventListener('resize', resizeCanvas);
-        canvas.addEventListener('click', handleClick);
-        canvas.addEventListener('touchstart', handleClick);
+        // Init
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Event Listeners
+            canvas.addEventListener('wheel', handleWheel);
+            canvas.addEventListener('mousedown', startPan);
+            canvas.addEventListener('mousemove', doPan);
+            canvas.addEventListener('mouseup', endPan);
+            canvas.addEventListener('touchstart', startPan);
+            canvas.addEventListener('touchmove', doPan);
+            canvas.addEventListener('touchend', endPan);
+
+            // First Star
+            generateStar({ id: 'default', username: 'Гость', level: 1 });
+            draw();
+        }
+
+        init();
     </script>
 </body>
 </html>
