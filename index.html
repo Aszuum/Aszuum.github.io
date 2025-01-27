@@ -7,17 +7,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html-docx-js/0.3.1/html-docx.js"></script>
     <style>
         :root {
-            --y-red: #fc3f1d;
-            --y-gray: #f1f1f1;
-            --y-dark: #212121;
+            --purple-1: #6A1B9A; /* Темно-фиолетовый */
+            --purple-2: #8E24AA; /* Фиолетовый */
+            --purple-3: #AB47BC; /* Светло-фиолетовый */
+            --accent: #FF4081; /* Акцентный розовый */
         }
 
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            background: var(--y-gray);
+            background: linear-gradient(45deg, #f3e5f5, #ede7f6); /* Светлый фиолетовый градиент */
             margin: 0;
-            color: var(--y-dark);
+            color: #2d004d; /* Темно-фиолетовый текст */
         }
 
         .container {
@@ -27,14 +28,14 @@
         }
 
         .header {
-            background: white;
+            background: linear-gradient(45deg, var(--purple-1), var(--purple-2)); /* Фиолетовый градиент */
             padding: 20px 0;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             margin-bottom: 40px;
         }
 
         .header h1 {
-            color: var(--y-red);
+            color: white;
             margin: 0;
             font-size: 2.2em;
             padding-left: 20px;
@@ -45,7 +46,7 @@
             border-radius: 12px;
             padding: 30px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(106,27,154,0.1); /* Фиолетовая тень */
         }
 
         .grid {
@@ -55,14 +56,14 @@
         }
 
         h2 {
-            color: var(--y-red);
-            border-bottom: 2px solid var(--y-gray);
+            color: var(--purple-1); /* Темно-фиолетовый */
+            border-bottom: 2px solid var(--purple-3); /* Светло-фиолетовый */
             padding-bottom: 10px;
             margin-top: 0;
         }
 
         h3 {
-            color: var(--y-dark);
+            color: var(--purple-2); /* Фиолетовый */
             margin: 20px 0 10px;
             font-size: 1.3em;
         }
@@ -81,11 +82,12 @@
             color: #666;
             margin: 15px 0;
             padding-left: 15px;
-            border-left: 3px solid var(--y-red);
+            border-left: 3px solid var(--accent); /* Акцентный розовый */
         }
 
         #exportBtn {
-            background: var(--y-red);
+            background: linear-gradient(135deg, var(--purple-1), var(--purple-2), var(--purple-3)); /* Фиолетовый градиент */
+            background-size: 300% 300%;
             color: white;
             padding: 15px 40px;
             border: none;
@@ -95,10 +97,18 @@
             transition: transform 0.2s;
             display: block;
             margin: 40px auto;
+            animation: gradientFlow 6s ease infinite;
+            box-shadow: 0 4px 15px rgba(106,27,154,0.3); /* Фиолетовая тень */
         }
 
         #exportBtn:hover {
             transform: translateY(-2px);
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
         }
 
         .footer {
