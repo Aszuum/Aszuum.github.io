@@ -2,61 +2,149 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Кнопкопресер</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квитанция об автосписании налога</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background: #f0f4f8;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+
+        body {
+            background: #f5f5f5;
+            color: #333333;
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .receipt {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            border: 1px solid #e0e0e0;
+        }
+
+        .header {
+            border-bottom: 2px solid #eeeeee;
+            padding-bottom: 25px;
+            margin-bottom: 30px;
             text-align: center;
         }
-        #last-click {
-            margin-top: 20px;
-            padding: 15px;
-            background: #2ecc71;
-            color: white;
+
+        .bank-logo {
+            width: 180px;
+            margin-bottom: 20px;
+        }
+
+        .document-title {
+            font-size: 22px;
+            color: #2d2d2d;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 2fr;
+            gap: 15px;
+            margin: 30px 0;
+            font-size: 15px;
+        }
+
+        .label {
+            color: #666666;
+            font-weight: 400;
+        }
+
+        .value {
+            color: #2d2d2d;
+            font-weight: 500;
+        }
+
+        .highlight {
+            color: #0088cc;
+            font-weight: 600;
+        }
+
+        .total-box {
+            background: #f8f9fa;
+            padding: 20px;
             border-radius: 8px;
+            margin: 25px 0;
+            border: 1px solid #e0e0e0;
+        }
+
+        .legal-info {
+            font-size: 13px;
+            color: #666666;
+            line-height: 1.6;
+            margin-top: 30px;
+            border-top: 1px solid #eeeeee;
+            padding-top: 20px;
+        }
+
+        .watermark {
+            opacity: 0.1;
+            position: absolute;
+            font-size: 80px;
+            transform: rotate(-30deg);
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔄 Последний клик</h1>
-        <div id="last-click">Загрузка данных...</div>
+    <div class="receipt">
+        <div class="header">
+            <div class="document-title">Автоматическое списание налога</div>
+            <div style="color: #666; margin-bottom: 15px;">ТБанк (АО "Тинькофф Банк")</div>
+        </div>
+
+        <div class="details-grid">
+            <span class="label">Номер документа:</span>
+            <span class="value highlight">НАЛ-4521789-2025</span>
+            
+            <span class="label">Дата списания:</span>
+            <span class="value">27.01.2025 11:30:47</span>
+            
+            <span class="label">Владелец карты:</span>
+            <span class="value">Каменский Тимур Владимирович<br>Карта •••• 1289</span>
+            
+            <span class="label">Налогоплательщик:</span>
+            <span class="value">Авдеев Кирилл Николаевич<br>ИНН 771234567890</span>
+            
+            <span class="label">Назначение платежа:</span>
+            <span class="value">Налог на доходы ФЛ (Статья 228 НК РФ)<br>Период: 4 квартал 2024</span>
+            
+            <span class="label">Сумма списания:</span>
+            <span class="value">415,78 ₽</span>
+            
+            <span class="label">Основание:</span>
+            <span class="value">Платёжное поручение №45-Н от 25.01.2025</span>
+        </div>
+
+        <div class="total-box">
+            <div style="display: flex; justify-content: space-between; font-size: 17px;">
+                <span>Итого списано:</span>
+                <span class="highlight">415,78 ₽</span>
+            </div>
+        </div>
+
+        <div class="legal-info">
+            <strong>Важная информация:</strong><br>
+            Списание произведено в соответствии с Федеральным законом №212-ФЗ.<br>
+            Остаток на карте: 12 458,22 ₽ (на момент операции)<br>
+            Комиссия за операцию: 0 ₽<br>
+            Техподдержка: 8 800 555-77-78 (круглосуточно)
+        </div>
     </div>
-
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script>
-        // Конфиг Firebase (ЗАМЕНИ НА СВОЙ!)
-        const firebaseConfig = {
-            apiKey: "riHpuTq68jlylkoFoVmp9gSL9Fu7JhpjKsJEpnWp",
-            databaseURL: "https://aszuumgitpages-default-rtdb.firebaseio.com/"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-
-        // Обновление данных в реальном времени
-        db.ref('buttonPresses').limitToLast(1).on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                const lastPress = Object.values(data)[0];
-                document.getElementById('last-click').innerHTML = `
-                    @${lastPress.username}<br>
-                    ${new Date(lastPress.timestamp).toLocaleString()}
-                `;
-            }
-        });
-    </script>
 </body>
 </html>
