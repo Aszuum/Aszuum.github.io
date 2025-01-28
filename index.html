@@ -3,173 +3,414 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Космический интерфейс</title>
+    <title>Статус транзакции №7X9P-44T3-LKJ8</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        :root {
+            --primary: #1A73E8;
+            --success: #34A853;
+            --error: #EA4335;
+            --warning: #FBBC05;
         }
 
         body {
-            background: #000;
-            color: #fff;
-            min-height: 100vh;
-            overflow-x: hidden;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8faff;
+            color: #2d3748;
+            line-height: 1.6;
         }
 
         .container {
-            padding: 2rem;
-            position: relative;
-            z-index: 2;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            transform: translateY(50px);
-            opacity: 0;
-            animation: fadeUp 1s forwards;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 30px rgba(0, 119, 255, 0.1);
-        }
-
-        @keyframes fadeUp {
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .menu {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
+        .status-header {
             display: flex;
-            gap: 1.5rem;
             align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
-        .menu-item {
-            background: rgba(255, 255, 255, 0.1);
-            width: 50px;
-            height: 50px;
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 25px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 15px;
+            width: 2px;
+            height: calc(100% - 30px);
+            background: #e2e8f0;
+        }
+
+        .step {
+            position: relative;
+            margin-bottom: 25px;
+            padding: 18px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            transition: transform 0.2s;
+        }
+
+        .step:hover {
+            transform: translateX(5px);
+        }
+
+        .step-icon {
+            position: absolute;
+            left: -35px;
+            top: 15px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: #fff;
+            border: 2px solid;
+            box-sizing: border-box;
+        }
+
+        .success { 
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .error { 
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .warning { 
+            border-color: var(--warning);
+            color: var(--warning);
+        }
+
+        .personal-data {
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .icon {
+            width: 16px;
+            height: 16px;
+            background-size: contain;
+            background-position: center;
+        }
+
+        .success-icon { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2334A853"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'); }
+        .error-icon { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23EA4335"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>'); }
+        .warning-icon { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FBBC05"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>'); }
+
+        .card-details {
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .expandable-block {
+            background: #fff;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        details summary {
+            padding: 15px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
+            font-weight: 500;
+            list-style: none;
         }
 
-        .menu-item:hover {
-            transform: scale(1.1);
-            background: rgba(0, 119, 255, 0.5);
-            box-shadow: 0 0 20px rgba(0, 119, 255, 0.3);
+        details summary::-webkit-details-marker {
+            display: none;
         }
 
-        .menu-item span {
-            position: absolute;
-            white-space: nowrap;
-            right: 60px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 5px 10px;
-            border-radius: 5px;
-            opacity: 0;
-            transition: opacity 0.3s;
+        details[open] summary {
+            border-bottom: 1px solid #eee;
         }
 
-        .menu-item:hover span {
-            opacity: 1;
-        }
-
-        .space-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .map-container {
+            height: 300px;
             width: 100%;
-            height: 100%;
-            z-index: 1;
+            border: none;
         }
 
-        .star {
-            fill: #fff;
-            animation: twinkle 1.5s infinite alternate;
+        .transaction-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            margin: 20px 0;
         }
 
-        @keyframes twinkle {
-            from { opacity: 0.3; }
-            to { opacity: 1; }
+        .info-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .info-item small {
+            display: block;
+            color: #718096;
+            margin-bottom: 4px;
+        }
+
+        /* Новые стили для уведомлений */
+        .standard-notice {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .notice-item {
+            display: flex;
+            gap: 12px;
+            align-items: start;
+            padding: 10px;
+        }
+
+        .notice-icon {
+            font-size: 1.2em;
+            margin-top: 3px;
+        }
+
+        .neutral-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .neutral-btn:hover {
+            opacity: 0.9;
+        }
+
+        .security-recommendations {
+            background: #fff;
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .security-recommendations ul {
+            margin: 8px 0;
+            padding-left: 20px;
+            color: #4a5568;
+        }
+
+        .security-recommendations li {
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
-    <svg class="space-bg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
-        <!-- Генерация звезд через JS -->
-    </svg>
-
     <div class="container">
-        <div class="card">
-            <h1>Космический интерфейс</h1>
-            <p>Исследуйте вселенную цифровых возможностей</p>
+        <a href="https://www.gosuslugi.ru/" target="_blank" style="text-decoration: none;">
+            <div class="status-header">
+                <img src="https://static.rustore.ru/imgproxy/KGIXzUh0OVgxlnbXVLvfHB9tlpBLHuT2z3PjJ9wMnT0/preset:app_card_icon/aHR0cHM6Ly9zdGF0aWMucnVzdG9yZS5ydS9hcGsvNTM3NzkxL2NvbnRlbnQvSUNPTi8wOGFhMjRmZi02NmQ3LTQyYmEtYmRjNi00Nzg5NmQwZWQ4NTYucG5n.webp" 
+                     style="width: 45px; height: 45px; border-radius: 8px;">
+                <div>
+                    <h1 style="margin: 0">Транзакция №7X9P-44T3-LKJ8</h1>
+                    <small>Статус: <span style="color: var(--error)">Отменена</span></small>
+                </div>
+            </div>
+        </a>
+
+        <!-- Персональные данные -->
+        <div class="personal-data">
+            <h3>Авдеев Кирилл Николаевич</h3>
+            <div class="data-item">
+                <span>Паспорт:</span>
+                <span>89 24 673165</span>
+            </div>
+            <div class="data-item">
+                <span>Телефон:</span>
+                <span>+7 966 053-30-53</span>
+            </div>
+            <div class="data-item">
+                <span>СНИЛС:</span>
+                <span>182-727-273 89</span>
+            </div>
         </div>
 
-        <div class="card">
-            <h2>О проекте</h2>
-            <p>Современный дизайн с элементами космической тематики</p>
+        <!-- Информация о транзакции -->
+        <div class="transaction-info">
+            <div class="info-item">
+                <small>Сумма</small>
+                <p>415,78 ₽</p>
+            </div>
+            <div class="info-item">
+                <small>Дата</small>
+                <p>15.07.2024</p>
+            </div>
+            <div class="info-item">
+                <small>Время</small>
+                <p>11:30:47</p>
+            </div>
+            <div class="info-item">
+                <small>Тип операции</small>
+                <p>Оплата услуг</p>
+            </div>
+        </div>
+
+        <!-- Данные карты -->
+        <div class="card-details">
+            <h3>Данные карты</h3>
+            <div class="data-item">
+                <span>Номер:</span>
+                <span>**** **** **** 2528</span>
+            </div>
+            <div class="data-item">
+                <span>Срок действия:</span>
+                <span>07/34</span>
+            </div>
+            <div class="data-item">
+                <span>Тип карты:</span>
+                <span>Дебетовая</span>
+            </div>
+            <div class="data-item">
+                <span>CVV:</span>
+                <span>***</span>
+            </div>
+        </div>
+
+        <!-- Рекомендации по безопасности -->
+        <div class="security-recommendations">
+            <h3><span class="notice-icon">🔒</span> Рекомендации по безопасности</h3>
+            <ul>
+                <li>Регулярно обновляйте операционную систему</li>
+                <li>Используйте защищённые сети для финансовых операций</li>
+                <li>Проверяйте разрешения мобильных приложений</li>
+            </ul>
+        </div>
+
+        <!-- Блок с картой -->
+        <div class="expandable-block">
+            <details>
+                <summary>Адрес регистрации</summary>
+                <div class="map-container">
+                    <iframe 
+                        width="100%" 
+                        height="300" 
+                        frameborder="0" 
+                        scrolling="no" 
+                        marginheight="0" 
+                        marginwidth="0" 
+                        src="https://maps.google.com/maps?q=55.679590,38.173674&z=15&output=embed">
+                    </iframe>
+                </div>
+                <div style="padding:15px">
+                    ул. Стрыкино, Раменский муниципальный округ,<br>
+                    Московская область, 140163
+                </div>
+            </details>
+        </div>
+
+        <!-- История операций -->
+        <div class="timeline">
+            <div class="step">
+                <div class="step-icon success"><div class="icon success-icon"></div></div>
+                <h3>Идентификация пользователя</h3>
+                <p>Биометрическая верификация пройдена</p>
+                <small>11:28:15</small>
+            </div>
+
+            <div class="step">
+                <div class="step-icon warning"><div class="icon warning-icon"></div></div>
+                <h3>Привязка карты</h3>
+                <p>T Bank ****2528 (Каменский Т.В.)</p>
+                <small>Несоответствие владельца</small>
+            </div>
+
+            <div class="step">
+                <div class="step-icon error"><div class="icon error-icon"></div></div>
+                <h3>Попытка списания</h3>
+                <p>415,78 ₽ • 11:30:47</p>
+                <p style="color: var(--error); margin-top: 8px;">
+                    Ошибка авторизации
+                </p>
+            </div>
+
+            <div class="step">
+                <div class="step-icon success"><div class="icon success-icon"></div></div>
+                <h3>Отзыв привязки</h3>
+                <p>Карта ****2528 успешно отвязана</p>
+                <small>11:33:02</small>
+            </div>
+        </div>
+
+        <!-- Контактная информация -->
+        <div class="personal-data">
+            <h3>Контактная информация</h3>
+            <div class="data-item">
+                <span>Отделение банка:</span>
+                <span>Т Банк, филиал №45</span>
+            </div>
+            <div class="data-item">
+                <span>Телефон поддержки:</span>
+                <span>8 800 555-35-35</span>
+            </div>
+            
+            <!-- Уведомление об обновлениях -->
+            <div class="standard-notice" style="margin-top:15px;">
+                <div class="notice-item">
+                    <div class="notice-icon">📱</div>
+                    <div>
+                        <p>Для оптимальной работы рекомендуем поддерживать актуальные версии приложений</p>
+                        <button class="neutral-btn">Инструкция по обновлению</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Комментарий системы -->
+        <div class="personal-data">
+            <h3>Комментарий системы</h3>
+            <p style="color: var(--error); margin: 0;">
+                Ошибка: Несоответствие данных владельца карты
+            </p>
+        </div>
+
+        <!-- Дополнительные рекомендации -->
+        <div class="security-recommendations">
+            <h3><span class="notice-icon">💡</span> Советы по защите</h3>
+            <ul>
+                <li>Устанавливайте приложения только из официальных магазинов</li>
+                <li>Не передавайте данные для входа третьим лицам</li>
+                <li>Используйте официальные банковские приложения</li>
+            </ul>
         </div>
     </div>
-
-    <nav class="menu">
-        <div class="menu-item">
-            <span>Главная</span>
-            🏠
-        </div>
-        <div class="menu-item">
-            <span>Настройки</span>
-            ⚙️
-        </div>
-        <div class="menu-item">
-            <span>Контакты</span>
-            📧
-        </div>
-    </nav>
-
-    <script>
-        // Генерация звездного фона
-        const spaceBg = document.querySelector('.space-bg');
-        for(let i = 0; i < 200; i++) {
-            const star = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            star.setAttribute("class", "star");
-            star.setAttribute("cx", Math.random() * 100);
-            star.setAttribute("cy", Math.random() * 100);
-            star.setAttribute("r", Math.random() * 0.3);
-            spaceBg.appendChild(star);
-        }
-
-        // Анимация карточек при скролле
-        const cards = document.querySelectorAll('.card');
-        window.addEventListener('scroll', () => {
-            cards.forEach(card => {
-                const rect = card.getBoundingClientRect();
-                if(rect.top < window.innerHeight * 0.8) {
-                    card.style.transform = 'translateY(0)';
-                    card.style.opacity = '1';
-                }
-            });
-        });
-
-        // Эффект параллакса для фона
-        window.addEventListener('mousemove', (e) => {
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
-            spaceBg.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
-        });
-    </script>
 </body>
 </html>
