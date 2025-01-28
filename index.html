@@ -2,337 +2,174 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Galaxy Network</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/@octokit/core"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Космический интерфейс</title>
     <style>
         * {
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
             background: #000;
-            overflow: hidden;
-            touch-action: none;
-            height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
-        }
-
-        #galaxy {
-            position: absolute;
-            touch-action: none;
-            cursor: grab;
-        }
-
-        .modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(28, 28, 30, 0.95);
-            backdrop-filter: blur(40px);
-            border-radius: 14px;
-            padding: 20px;
-            width: 85%;
-            max-width: 300px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
             color: #fff;
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
-            display: none;
-            z-index: 1000;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .modal-header {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 12px;
+        .container {
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
         }
 
-        .level-badge {
-            background: linear-gradient(45deg, #e6e6ff, #ffe6ff);
-            padding: 6px 14px;
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
-            color: #1C1C1E;
-            font-weight: 600;
-            font-size: 14px;
-            display: inline-block;
-            margin: 8px 0;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transform: translateY(50px);
+            opacity: 0;
+            animation: fadeUp 1s forwards;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 30px rgba(0, 119, 255, 0.1);
         }
 
-        .progress-container {
+        @keyframes fadeUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .menu {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .menu-item {
             background: rgba(255, 255, 255, 0.1);
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 12px 0;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .progress-bar {
+        .menu-item:hover {
+            transform: scale(1.1);
+            background: rgba(0, 119, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 119, 255, 0.3);
+        }
+
+        .menu-item span {
+            position: absolute;
+            white-space: nowrap;
+            right: 60px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 10px;
+            border-radius: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .menu-item:hover span {
+            opacity: 1;
+        }
+
+        .space-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, #e6e6ff, #ffe6ff);
-            transition: width 0.4s ease;
+            z-index: 1;
         }
 
-        .user-stats {
-            font-size: 13px;
-            opacity: 0.9;
-            line-height: 1.4;
+        .star {
+            fill: #fff;
+            animation: twinkle 1.5s infinite alternate;
+        }
+
+        @keyframes twinkle {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <canvas id="galaxy"></canvas>
-    
-    <div class="modal" id="starModal">
-        <div class="modal-header" id="starUsername"></div>
-        <div class="level-badge" id="starLevel">Level 1</div>
-        <div class="progress-container">
-            <div class="progress-bar" id="starProgress"></div>
+    <svg class="space-bg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+        <!-- Генерация звезд через JS -->
+    </svg>
+
+    <div class="container">
+        <div class="card">
+            <h1>Космический интерфейс</h1>
+            <p>Исследуйте вселенную цифровых возможностей</p>
         </div>
-        <div class="user-stats">
-            <div>Опыт: <span id="starXP">0/100</span></div>
-            <div>Звёзд: <span id="starCount">0</span></div>
-            <div>Ранг: <span id="starRank">Новичок</span></div>
+
+        <div class="card">
+            <h2>О проекте</h2>
+            <p>Современный дизайн с элементами космической тематики</p>
         </div>
     </div>
 
+    <nav class="menu">
+        <div class="menu-item">
+            <span>Главная</span>
+            🏠
+        </div>
+        <div class="menu-item">
+            <span>Настройки</span>
+            ⚙️
+        </div>
+        <div class="menu-item">
+            <span>Контакты</span>
+            📧
+        </div>
+    </nav>
+
     <script>
-        const tg = window.Telegram.WebApp;
-        const Octokit = window.Octokit;
-        
-        // Конфигурация
-        const GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN';
-        const REPO_NAME = 'YOUR_USERNAME/YOUR_REPO';
-        const DATA_FILE = 'stars.json';
-        
-        let scale = 1;
-        let offset = { x: 0, y: 0 };
-        let stars = [];
-        let currentUser = null;
-        const canvas = document.getElementById('galaxy');
-        const ctx = canvas.getContext('2d');
-        const octokit = new Octokit({ auth: GITHUB_TOKEN });
-
-        // Цвета по уровням (пастельные)
-        const levelColors = {
-            1: '#ffffff',
-            5: '#ffe6ff',
-            10: '#e6e6ff',
-            15: '#e6ffff',
-            20: '#ffede6',
-            25: '#f0e6ff',
-            30: '#e6f0ff',
-            35: '#fffae6',
-            40: '#e6ffe6',
-            45: '#ffdbdb',
-            50: '#dbffdb'
-        };
-
-        // Инициализация
-        async function init() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            // Загрузка данных
-            try {
-                const { data } = await octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
-                    owner: REPO_NAME.split('/')[0],
-                    repo: REPO_NAME.split('/')[1],
-                    path: DATA_FILE
-                });
-                
-                stars = JSON.parse(atob(data.content));
-            } catch (e) {
-                await initNewRepo();
-            }
-
-            // Авторизация в Telegram
-            if (tg.initDataUnsafe.user) {
-                currentUser = {
-                    id: tg.initDataUnsafe.user.id,
-                    username: tg.initDataUnsafe.user.username || `user_${tg.initDataUnsafe.user.id}`,
-                    level: 1,
-                    xp: 0,
-                    stars: 0
-                };
-                
-                if (!stars.find(s => s.user.id === currentUser.id)) {
-                    await generateNewStar(currentUser);
-                }
-            }
-
-            draw();
-            initEvents();
+        // Генерация звездного фона
+        const spaceBg = document.querySelector('.space-bg');
+        for(let i = 0; i < 200; i++) {
+            const star = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            star.setAttribute("class", "star");
+            star.setAttribute("cx", Math.random() * 100);
+            star.setAttribute("cy", Math.random() * 100);
+            star.setAttribute("r", Math.random() * 0.3);
+            spaceBg.appendChild(star);
         }
 
-        // Генерация новой звезды
-        async function generateNewStar(user) {
-            const newStar = {
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                radius: 6,
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    level: 1,
-                    xp: 0,
-                    stars: 0
-                },
-                color: getLevelColor(1)
-            };
-
-            // Проверка коллизий
-            let collision = false;
-            for (const star of stars) {
-                const dx = star.x - newStar.x;
-                const dy = star.y - newStar.y;
-                if (Math.sqrt(dx*dx + dy*dy) < 100) {
-                    collision = true;
-                    break;
-                }
-            }
-
-            if (!collision) {
-                stars.push(newStar);
-                await saveStars();
-                return true;
-            }
-            return false;
-        }
-
-        // Сохранение звёзд
-        async function saveStars() {
-            try {
-                await octokit.request('PUT /repos/{owner}/{repo}/contents/{path}', {
-                    owner: REPO_NAME.split('/')[0],
-                    repo: REPO_NAME.split('/')[1],
-                    path: DATA_FILE,
-                    message: 'Update stars data',
-                    content: btoa(JSON.stringify(stars)),
-                    sha: await getFileSha()
-                });
-            } catch (e) {
-                console.error('Ошибка сохранения:', e);
-            }
-        }
-
-        // Отрисовка
-        function draw() {
-            ctx.save();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.translate(offset.x, offset.y);
-            ctx.scale(scale, scale);
-
-            stars.forEach(star => {
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-                ctx.fillStyle = getLevelColor(star.user.level);
-                ctx.shadowColor = getLevelColor(star.user.level);
-                ctx.shadowBlur = 15;
-                ctx.fill();
-            });
-
-            ctx.restore();
-        }
-
-        // Цвет по уровню
-        function getLevelColor(level) {
-            const levels = Object.keys(levelColors).sort((a,b) => a - b);
-            let color = levelColors[1];
-            
-            for (const l of levels) {
-                if (level >= l) color = levelColors[l];
-            }
-            return color;
-        }
-
-        // События
-        function initEvents() {
-            // Зум/Пан
-            canvas.addEventListener('wheel', e => {
-                e.preventDefault();
-                const zoom = e.deltaY > 0 ? 0.9 : 1.1;
-                scale = Math.min(Math.max(1, scale * zoom), 5);
-                draw();
-            });
-
-            let isPanning = false;
-            let startPos = { x: 0, y: 0 };
-
-            canvas.addEventListener('mousedown', e => {
-                isPanning = true;
-                startPos = { x: e.clientX - offset.x, y: e.clientY - offset.y };
-                canvas.style.cursor = 'grabbing';
-            });
-
-            canvas.addEventListener('mousemove', e => {
-                if (isPanning) {
-                    offset.x = e.clientX - startPos.x;
-                    offset.y = e.clientY - startPos.y;
-                    draw();
+        // Анимация карточек при скролле
+        const cards = document.querySelectorAll('.card');
+        window.addEventListener('scroll', () => {
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                if(rect.top < window.innerHeight * 0.8) {
+                    card.style.transform = 'translateY(0)';
+                    card.style.opacity = '1';
                 }
             });
+        });
 
-            canvas.addEventListener('mouseup', () => {
-                isPanning = false;
-                canvas.style.cursor = 'grab';
-            });
-
-            // Клик по звезде
-            canvas.addEventListener('click', async e => {
-                const rect = canvas.getBoundingClientRect();
-                const x = (e.clientX - rect.left - offset.x) / scale;
-                const y = (e.clientY - rect.top - offset.y) / scale;
-
-                for (const star of stars) {
-                    const dx = x - star.x;
-                    const dy = y - star.y;
-                    if (Math.sqrt(dx*dx + dy*dy) < 20) {
-                        showStarInfo(star);
-                        return;
-                    }
-                }
-            });
-        }
-
-        // Показать информацию
-        function showStarInfo(star) {
-            const modal = document.getElementById('starModal');
-            modal.style.display = 'block';
-            
-            document.getElementById('starUsername').textContent = `@${star.user.username}`;
-            document.getElementById('starLevel').textContent = `Level ${star.user.level}`;
-            document.getElementById('starXP').textContent = `${star.user.xp}/${getRequiredXP(star.user.level)}`;
-            document.getElementById('starCount').textContent = star.user.stars;
-            document.getElementById('starRank').textContent = getRank(star.user.level);
-            document.getElementById('starProgress').style.width = 
-                `${(star.user.xp / getRequiredXP(star.user.level)) * 100}%`;
-        }
-
-        // Вспомогательные функции
-        function getRequiredXP(level) {
-            if (level <= 26) return 100;
-            if (level <= 45) return 204;
-            if (level <= 94) return 300;
-            return 565;
-        }
-
-        function getRank(level) {
-            if (level < 5) return 'Новичок';
-            if (level < 15) return 'Исследователь';
-            if (level < 30) return 'Мастер звёзд';
-            return 'Галактический лидер';
-        }
-
-        // Запуск
-        tg.ready();
-        tg.expand();
-        init();
+        // Эффект параллакса для фона
+        window.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            spaceBg.style.transform = `translate(${x * 10}px, ${y * 10}px)`;
+        });
     </script>
 </body>
 </html>
